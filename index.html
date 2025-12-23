@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Misterio Pro Max</title>
+  <title>Misterio Impostor</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -149,7 +149,42 @@
 
     /* Final Screen */
     .party-icon { font-size: 4rem; margin-bottom: 1rem; }
-
+    .how-to-play {
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 1rem;
+    }
+    
+    .how-to-btn {
+      background: transparent !important;
+      color: #aaa !important;
+      font-size: 0.8rem !important;
+      text-transform: none !important;
+      letter-spacing: 0 !important;
+      padding: 5px !important;
+      margin: 0 !important;
+      width: auto !important;
+    }
+    
+    .instructions-content {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      text-align: left;
+      line-height: 1.4;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .instructions-content p {
+      margin: 5px 0;
+      opacity: 0.9;
+    }
+    
+    .instructions-content strong {
+      color: var(--primary);
+    }
   </style>
 </head>
 
@@ -157,7 +192,7 @@
   <div class="card" id="mainCard">
 
     <div id="setup">
-      <h1>MISTERIO<br>DE FIESTA</h1>
+      <h1>MISTERIO<br>EN LAS FIESTAS</h1>
       
       <div class="input-group">
         <label>¿Cuántos juegan?</label>
@@ -170,6 +205,15 @@
       </div>
 
       <button onclick="startGame()">Comenzar Juego</button>
+    </div>
+
+    <div class="how-to-play">
+      <button class="how-to-btn" onclick="toggleInstructions()">¿Cómo se juega? ▾</button>
+      <div id="instructions" class="instructions-content hidden">
+        <p>1. Un jugador es el <strong>Impostor</strong> y no conoce la palabra.</p>
+        <p>2. Todos describen la palabra con <strong>una sola palabra</strong> cada uno.</p>
+        <p>3. El grupo vota quién es el impostor. ¡Que no te descubran!</p>
+      </div>
     </div>
 
     <div id="revealScreen" class="hidden">
@@ -273,6 +317,14 @@
       } else {
         updatePlayerTitle();
       }
+    }
+    function toggleInstructions() {
+      const instr = document.getElementById('instructions');
+      instr.classList.toggle('hidden');
+      
+      // Opcional: Cambiar la flechita del botón
+      const btn = document.querySelector('.how-to-btn');
+      btn.innerText = instr.classList.contains('hidden') ? '¿Cómo se juega? ▾' : 'Ocultar info ▴';
     }
   </script>
 </body>
