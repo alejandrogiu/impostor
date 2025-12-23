@@ -9,6 +9,7 @@
     :root {
       --primary: #ff6a00;
       --secondary: #ee0979;
+      --accent: #00e0ff;
       --bg: #0f0c29;
       --card-bg: rgba(255, 255, 255, 0.05);
       --glass-border: rgba(255, 255, 255, 0.1);
@@ -26,34 +27,109 @@
       justify-content: center;
       min-height: 100vh;
       overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 9, 121, 0.15), transparent 70%);
+      border-radius: 50%;
+      top: -250px;
+      right: -250px;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 106, 0, 0.15), transparent 70%);
+      border-radius: 50%;
+      bottom: -200px;
+      left: -200px;
+      animation: float 15s infinite ease-in-out reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -30px) rotate(120deg); }
+      66% { transform: translate(-20px, 20px) rotate(240deg); }
     }
 
     .card {
       background: var(--card-bg);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       padding: 2.5rem;
-      border-radius: 24px;
-      max-width: 400px;
+      border-radius: 32px;
+      max-width: 420px;
       width: 90%;
       border: 1px solid var(--glass-border);
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-      transition: all 0.4s ease;
-      animation: fadeIn 0.6s ease-out;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6), 
+                  inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      z-index: 10;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+      border-radius: 32px;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.5s;
+      background-size: 300% 300%;
+      animation: gradientShift 4s ease infinite;
+    }
+
+    .card:hover::before {
+      opacity: 0.15;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes cardEntrance {
+      from { 
+        opacity: 0; 
+        transform: translateY(40px) scale(0.9); 
+        filter: blur(10px);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+        filter: blur(0);
+      }
     }
 
     h1 {
       font-weight: 900;
-      letter-spacing: -1px;
+      letter-spacing: -2px;
       margin-bottom: 1.5rem;
-      background: linear-gradient(to right, #ff6a00, #ee0979);
+      background: linear-gradient(135deg, #ff6a00, #ee0979, #00e0ff);
+      background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      animation: gradientFlow 3s ease infinite;
+      font-size: 2.8rem;
+      line-height: 1.1;
+      text-shadow: 0 0 40px rgba(255, 106, 0, 0.3);
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    @keyframes gradientFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .input-group { margin-bottom: 1.2rem; text-align: left; }
@@ -66,40 +142,85 @@
       margin-top: 5px;
       background: rgba(255,255,255,0.08);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
+      border-radius: 16px;
       color: #fff;
       font-size: 1rem;
       outline: none;
-      transition: 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
 
     input:focus {
       background: rgba(255,255,255,0.15);
       border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(255, 106, 0, 0.2), 
+                  inset 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    input:hover {
+      border-color: rgba(255, 106, 0, 0.5);
     }
 
     button {
       width: 100%;
-      padding: 1rem;
-      border-radius: 12px;
+      padding: 1.1rem;
+      border-radius: 16px;
       border: none;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.2s, filter 0.2s;
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-size: 200% 200%;
       color: white;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(255, 106, 0, 0.3);
     }
 
-    button:active { transform: scale(0.96); }
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(255, 106, 0, 0.5);
+      background-position: 100% 0;
+    }
+
+    button:active { 
+      transform: translateY(-1px) scale(0.98); 
+      box-shadow: 0 4px 12px rgba(255, 106, 0, 0.4);
+    }
     
     button:disabled {
       filter: grayscale(1);
       opacity: 0.5;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    button:disabled:hover {
+      transform: none;
     }
 
     .hidden { display: none !important; }
@@ -108,47 +229,119 @@
     .player-indicator {
       font-size: 0.9rem;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.7;
+      letter-spacing: 3px;
+      opacity: 0.8;
       margin-bottom: 0.5rem;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 0.8; transform: translateX(0); }
     }
 
     .reveal-box {
       margin: 2rem 0;
-      padding: 2rem;
-      border-radius: 16px;
-      background: rgba(0,0,0,0.3);
-      min-height: 120px;
+      padding: 2.5rem;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+      min-height: 140px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      border: 2px solid rgba(255,255,255,0.05);
+      box-shadow: inset 0 2px 20px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reveal-box::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+      animation: rotate 10s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     .reveal-text {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       font-weight: 900;
-      animation: pulse 1s infinite alternate;
+      animation: revealPulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 2px;
     }
 
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.05); }
+    @keyframes revealPulse {
+      from { 
+        transform: scale(1); 
+        filter: brightness(1);
+      }
+      to { 
+        transform: scale(1.08); 
+        filter: brightness(1.2);
+      }
     }
 
-    .impostor { color: #ff3b3b; text-shadow: 0 0 20px rgba(255,59,59,0.5); }
-    .word { color: #00e0ff; text-shadow: 0 0 20px rgba(0,224,255,0.5); }
+    .impostor { 
+      color: #ff3b3b; 
+      text-shadow: 0 0 30px rgba(255,59,59,0.8),
+                   0 0 60px rgba(255,59,59,0.4);
+      animation: impostorShake 0.3s ease infinite;
+    }
+
+    @keyframes impostorShake {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(-2px) rotate(-1deg); }
+      75% { transform: translateX(2px) rotate(1deg); }
+    }
+
+    .word { 
+      color: #00e0ff; 
+      text-shadow: 0 0 30px rgba(0,224,255,0.8),
+                   0 0 60px rgba(0,224,255,0.4);
+    }
 
     .timer-badge {
-      background: rgba(255,255,255,0.1);
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 0.8rem;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 0.85rem;
       margin-top: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 1;
+      animation: badgePulse 2s ease infinite;
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
     /* Final Screen */
-    .party-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .party-icon { 
+      font-size: 5rem; 
+      margin-bottom: 1rem; 
+      animation: partyBounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
+    }
+
+    @keyframes partyBounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
     .how-to-play {
       margin-top: 1.5rem;
       border-top: 1px solid var(--glass-border);
@@ -157,47 +350,125 @@
     
     .how-to-btn {
       background: transparent !important;
-      color: #aaa !important;
-      font-size: 0.8rem !important;
+      color: rgba(255,255,255,0.5) !important;
+      font-size: 0.85rem !important;
       text-transform: none !important;
       letter-spacing: 0 !important;
-      padding: 5px !important;
+      padding: 8px !important;
       margin: 0 !important;
       width: auto !important;
+      box-shadow: none !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .how-to-btn:hover {
+      color: rgba(255,255,255,0.8) !important;
+      transform: translateY(0) !important;
     }
     
     .instructions-content {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-top: 0.5rem;
-      font-size: 0.85rem;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+      border-radius: 16px;
+      padding: 1.2rem;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
       text-align: left;
-      line-height: 1.4;
-      animation: fadeIn 0.3s ease;
+      line-height: 1.6;
+      animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    @keyframes slideDown {
+      from { 
+        opacity: 0; 
+        transform: translateY(-10px); 
+        max-height: 0;
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+        max-height: 500px;
+      }
     }
     
     .instructions-content p {
-      margin: 5px 0;
-      opacity: 0.9;
+      margin: 8px 0;
+      opacity: 0.95;
     }
     
     .instructions-content strong {
       color: var(--primary);
+      font-weight: 700;
     }
+
     #privacyWarning {
-      background: rgba(255, 166, 0, 0.1);
-      border: 1px dashed var(--primary);
-      padding: 1.5rem;
-      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 166, 0, 0.15), rgba(255, 106, 0, 0.1));
+      border: 2px solid rgba(255, 166, 0, 0.3);
+      padding: 1.8rem;
+      border-radius: 20px;
       margin: 1.5rem 0;
-      animation: pulseWarning 2s infinite;
+      animation: warningPulse 3s ease-in-out infinite;
+      box-shadow: 0 8px 24px rgba(255, 166, 0, 0.2),
+                  inset 0 1px 0 rgba(255,255,255,0.1);
     }
     
-    @keyframes pulseWarning {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.02); background: rgba(255, 166, 0, 0.15); }
-      100% { transform: scale(1); }
+    @keyframes warningPulse {
+      0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 8px 24px rgba(255, 166, 0, 0.2),
+                    inset 0 1px 0 rgba(255,255,255,0.1);
+      }
+      50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 12px 32px rgba(255, 166, 0, 0.4),
+                    inset 0 1px 0 rgba(255,255,255,0.1);
+      }
+    }
+
+    #privacyWarning h3 {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 0;
+    }
+
+    #privacyWarning > div {
+      animation: wiggle 1s ease-in-out infinite;
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+    }
+
+    .fade-out {
+      animation: fadeOut 0.4s ease forwards;
+    }
+
+    @keyframes fadeOut {
+      to { 
+        opacity: 0; 
+        transform: scale(0.95) translateY(-20px); 
+        filter: blur(10px);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { 
+        opacity: 0; 
+        transform: scale(0.95) translateY(20px); 
+        filter: blur(10px);
+      }
+      to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0); 
+        filter: blur(0);
+      }
     }
   </style>
 </head>
@@ -219,14 +490,14 @@
       </div>
 
       <button onclick="startGame()">Comenzar Juego</button>
-    </div>
 
-    <div class="how-to-play">
-      <button class="how-to-btn" onclick="toggleInstructions()">¿Cómo se juega? ▾</button>
-      <div id="instructions" class="instructions-content hidden">
-        <p>1. Un jugador es el <strong>Impostor</strong> y no conoce la palabra.</p>
-        <p>2. Todos describen la palabra con <strong>una sola palabra</strong> cada uno.</p>
-        <p>3. El grupo vota quién es el impostor. ¡Que no te descubran!</p>
+      <div class="how-to-play">
+        <button class="how-to-btn" onclick="toggleInstructions()">¿Cómo se juega? ▾</button>
+        <div id="instructions" class="instructions-content hidden">
+          <p>1. Un jugador es el <strong>Impostor</strong> y no conoce la palabra.</p>
+          <p>2. Todos describen la palabra con <strong>una sola palabra</strong> cada uno.</p>
+          <p>3. El grupo vota quién es el impostor. ¡Que no te descubran!</p>
+        </div>
       </div>
     </div>
 
@@ -245,7 +516,7 @@
       </div>
     
       <button id="revealBtn" onclick="reveal()" style="margin-top: 20px;">ENTENDIDO, MOSTRAR</button>
-      <button id="nextBtn" class="hidden" onclick="nextPlayer()">LISTO, PASA EL CELULAR</button>
+      <button id="nextBtn" class="hidden" onclick="nextPlayer()">LISTO, PASAR CELULAR</button>
     </div>
 
     <div id="endScreen" class="hidden">
@@ -274,6 +545,50 @@
     const timer = document.getElementById('timer');
     const nextBtn = document.getElementById('nextBtn');
 
+    function transitionScreens(hideEl, showEl) {
+      hideEl.classList.add('fade-out');
+      setTimeout(() => {
+        hideEl.classList.add('hidden');
+        hideEl.classList.remove('fade-out');
+        showEl.classList.remove('hidden');
+        showEl.classList.add('fade-in');
+        setTimeout(() => showEl.classList.remove('fade-in'), 600);
+      }, 400);
+    }
+
+    function createConfetti() {
+      const colors = ['#ff6a00', '#ee0979', '#00e0ff', '#ffd700'];
+      const confettiCount = 50;
+      
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'fixed';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '-10px';
+        confetti.style.opacity = '1';
+        confetti.style.borderRadius = '50%';
+        confetti.style.pointerEvents = 'none';
+        confetti.style.zIndex = '1000';
+        document.body.appendChild(confetti);
+        
+        const duration = Math.random() * 3 + 2;
+        const xMovement = (Math.random() - 0.5) * 200;
+        
+        confetti.animate([
+          { transform: 'translateY(0) translateX(0) rotate(0deg)', opacity: 1 },
+          { transform: `translateY(100vh) translateX(${xMovement}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+        ], {
+          duration: duration * 1000,
+          easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        });
+        
+        setTimeout(() => confetti.remove(), duration * 1000);
+      }
+    }
+
     function startGame() {
       totalPlayers = parseInt(document.getElementById('playersInput').value);
       secretWord = document.getElementById('wordInput').value.trim();
@@ -286,8 +601,7 @@
       impostorIndex = Math.floor(Math.random() * totalPlayers);
       currentPlayer = 0;
 
-      setup.classList.add("hidden");
-      revealScreen.classList.remove("hidden");
+      transitionScreens(setup, revealScreen);
       updatePlayerTitle();
     }
 
@@ -307,11 +621,13 @@
       revealBtn.classList.add("hidden");
       
       revealBox.classList.remove("hidden");
+      revealBox.classList.add('fade-in');
     
       let text, className;
       if (currentPlayer === impostorIndex) {
         text = "¡SOS EL IMPOSTOR!";
         className = "impostor";
+        setTimeout(createConfetti, 300);
       } else {
         text = secretWord;
         className = "word";
@@ -329,25 +645,30 @@
           timer.innerText = `Ocultando en ${timeLeft}s...`;
         } else {
           clearInterval(countdownInterval);
-          revealBox.classList.add("hidden");
-          nextBtn.classList.remove("hidden");
+          revealBox.classList.add('fade-out');
+          setTimeout(() => {
+            revealBox.classList.add("hidden");
+            revealBox.classList.remove('fade-out', 'fade-in');
+            nextBtn.classList.remove("hidden");
+          }, 400);
         }
       }, 1000);
     }
+
     function nextPlayer() {
       currentPlayer++;
       if (currentPlayer >= totalPlayers) {
-        revealScreen.classList.add("hidden");
-        endScreen.classList.remove("hidden");
+        transitionScreens(revealScreen, endScreen);
+        createConfetti();
       } else {
         updatePlayerTitle();
       }
     }
+
     function toggleInstructions() {
       const instr = document.getElementById('instructions');
       instr.classList.toggle('hidden');
       
-      // Opcional: Cambiar la flechita del botón
       const btn = document.querySelector('.how-to-btn');
       btn.innerText = instr.classList.contains('hidden') ? '¿Cómo se juega? ▾' : 'Ocultar info ▴';
     }
