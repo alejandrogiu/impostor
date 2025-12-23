@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Misterio Pro Max</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff6a00;
+      --secondary: #ee0979;
+      --bg: #0f0c29;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 2.5rem;
+      border-radius: 24px;
+      max-width: 400px;
+      width: 90%;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      transition: all 0.4s ease;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(to right, #ff6a00, #ee0979);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .input-group { margin-bottom: 1.2rem; text-align: left; }
+    
+    label { font-size: 0.8rem; opacity: 0.6; margin-left: 5px; }
+
+    input {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 5px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      background: rgba(255,255,255,0.15);
+      border-color: var(--primary);
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 12px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, filter 0.2s;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 10px;
+    }
+
+    button:active { transform: scale(0.96); }
+    
+    button:disabled {
+      filter: grayscale(1);
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Reveal Section */
+    .player-indicator {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .reveal-box {
+      margin: 2rem 0;
+      padding: 2rem;
+      border-radius: 16px;
+      background: rgba(0,0,0,0.3);
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reveal-text {
+      font-size: 2.5rem;
+      font-weight: 900;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+
+    .impostor { color: #ff3b3b; text-shadow: 0 0 20px rgba(255,59,59,0.5); }
+    .word { color: #00e0ff; text-shadow: 0 0 20px rgba(0,224,255,0.5); }
+
+    .timer-badge {
+      background: rgba(255,255,255,0.1);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-top: 15px;
+    }
+
+    /* Final Screen */
+    .party-icon { font-size: 4rem; margin-bottom: 1rem; }
+
+  </style>
+</head>
+
+<body>
+  <div class="card" id="mainCard">
+
+    <div id="setup">
+      <h1>MISTERIO<br>DE FIESTA</h1>
+      
+      <div class="input-group">
+        <label>¿Cuántos juegan?</label>
+        <input id="playersInput" type="number" min="3" placeholder="Ej: 5" />
+      </div>
+
+      <div class="input-group">
+        <label>Palabra para el grupo</label>
+        <input id="wordInput" type="text" placeholder="Ej: Pizza" />
+      </div>
+
+      <button onclick="startGame()">Comenzar Juego</button>
+    </div>
+
+    <div id="revealScreen" class="hidden">
+      <div class="player-indicator" id="playerTitle"></div>
+      
+      <div id="revealBox" class="reveal-box hidden">
+        <div id="result" class="reveal-text"></div>
+        <div id="timer" class="timer-badge"></div>
+      </div>
+
+      <button id="revealBtn" onclick="reveal()">Toca para revelar</button>
+      <button id="nextBtn" class="hidden" onclick="nextPlayer()">Entregar al siguiente</button>
+    </div>
+
+    <div id="endScreen" class="hidden">
+      <div class="party-icon">🎭</div>
+      <h2>¡Todo listo!</h2>
+      <p style="opacity:0.8">Nadie diga su palabra.<br>El impostor debe mezclarse.</p>
+      <button onclick="location.reload()">Nueva Partida</button>
+    </div>
+
+  </div>
+
+  <script>
+    let totalPlayers = 0;
+    let secretWord = "";
+    let impostorIndex = 0;
+    let currentPlayer = 0;
+    let countdownInterval;
+
+    const setup = document.getElementById('setup');
+    const revealScreen = document.getElementById('revealScreen');
+    const endScreen = document.getElementById('endScreen');
+    const playerTitle = document.getElementById('playerTitle');
+    const revealBtn = document.getElementById('revealBtn');
+    const revealBox = document.getElementById('revealBox');
+    const result = document.getElementById('result');
+    const timer = document.getElementById('timer');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function startGame() {
+      totalPlayers = parseInt(document.getElementById('playersInput').value);
+      secretWord = document.getElementById('wordInput').value.trim();
+
+      if (totalPlayers < 3 || !secretWord) {
+        alert("¡Epa! Necesitamos al menos 3 jugadores y una palabra secreta.");
+        return;
+      }
+
+      impostorIndex = Math.floor(Math.random() * totalPlayers);
+      currentPlayer = 0;
+
+      setup.classList.add("hidden");
+      revealScreen.classList.remove("hidden");
+      updatePlayerTitle();
+    }
+
+    function updatePlayerTitle() {
+      playerTitle.innerText = `Turno del Jugador ${currentPlayer + 1}`;
+      revealBtn.classList.remove("hidden");
+      revealBox.classList.add("hidden");
+      nextBtn.classList.add("hidden");
+    }
+
+    function reveal() {
+      revealBtn.classList.add("hidden");
+      revealBox.classList.remove("hidden");
+
+      let text, className;
+      if (currentPlayer === impostorIndex) {
+        text = "¡SOS EL IMPOSTOR!";
+        className = "impostor";
+      } else {
+        text = secretWord;
+        className = "word";
+      }
+
+      result.innerText = text;
+      result.className = `reveal-text ${className}`;
+
+      let timeLeft = 3;
+      timer.innerText = `Ocultando en ${timeLeft}s...`;
+
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          timer.innerText = `Ocultando en ${timeLeft}s...`;
+        } else {
+          clearInterval(countdownInterval);
+          revealBox.classList.add("hidden");
+          nextBtn.classList.remove("hidden");
+        }
+      }, 1000);
+    }
+
+    function nextPlayer() {
+      currentPlayer++;
+      if (currentPlayer >= totalPlayers) {
+        revealScreen.classList.add("hidden");
+        endScreen.classList.remove("hidden");
+      } else {
+        updatePlayerTitle();
+      }
+    }
+  </script>
+</body>
+</html>
