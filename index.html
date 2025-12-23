@@ -94,14 +94,67 @@
       background: rgba(0,0,0,0.3);
       text-align: center;
     }
+    
+    .reveal-box {
+      animation: revealIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal-box {
+      background: radial-gradient(
+        circle at top,
+        rgba(255,255,255,0.12),
+        rgba(0,0,0,0.35)
+      );
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @keyframes revealIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
 
     .reveal-text {
       font-size: 2.4rem;
       font-weight: 900;
     }
+    .reveal-text {
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .reveal-box:not(.hidden) .reveal-text {
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .reveal-text {
+      letter-spacing: 1px;
+    }
 
-    .impostor { color: #ff3b3b; }
-    .word { color: #00e0ff; }
+
+    
+    @keyframes pulse {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+
+    .impostor {
+      color: #ff3b3b;
+      text-shadow:
+        0 0 12px rgba(255, 59, 59, 0.8),
+        0 0 30px rgba(255, 59, 59, 0.6);
+    }
+    
+    .word {
+      color: #00e0ff;
+      text-shadow:
+        0 0 12px rgba(0, 224, 255, 0.8),
+        0 0 30px rgba(0, 224, 255, 0.6);
+    }
 
     .timer-badge {
       margin-top: 10px;
@@ -159,7 +212,13 @@
     <!-- SETUP -->
     <div id="setup">
       <h1>MISTERIO<br>EN LAS FIESTAS</h1>
-      <input id="playersInput" type="number" min="3" placeholder="Cantidad de jugadores" />
+      <input
+        id="playersInput"
+        type="number"
+        min="3"
+        step="1"
+        placeholder="Mínimo 3 jugadores"
+      />
       <input id="wordInput" type="text" placeholder="Palabra secreta" />
       <button onclick="startGame()">Comenzar</button>
 
@@ -187,7 +246,7 @@
       </div>
 
       <button id="revealBtn" onclick="reveal()">Revelar</button>
-      <button id="nextBtn" class="hidden" onclick="nextPlayer()">Pasar celular</button>
+      <button id="nextBtn" class="hidden" onclick="nextPlayer()">Pasa el celular</button>
     </div>
 
     <!-- END -->
@@ -219,19 +278,30 @@
     function startGame() {
       totalPlayers = parseInt(playersInput.value);
       secretWord = wordInput.value.trim();
-      if (totalPlayers < 3 || !secretWord) return;
-
+    
+      if (isNaN(totalPlayers) || totalPlayers < 3) {
+        alert("Este juego necesita al menos 3 jugadores.");
+        return;
+      }
+    
+      if (!secretWord) {
+        alert("Tenés que ingresar una palabra secreta.");
+        return;
+      }
+    
       const impostorCount = totalPlayers >= 9 ? 2 : 1;
       impostorIndexes = [];
+    
       while (impostorIndexes.length < impostorCount) {
         const i = Math.floor(Math.random() * totalPlayers);
         if (!impostorIndexes.includes(i)) impostorIndexes.push(i);
       }
-
+    
       currentPlayer = 0;
       transition(setup, revealScreen);
       updatePlayer();
     }
+
 
     function updatePlayer() {
       playerTitle.innerText = `Jugador ${currentPlayer + 1}`;
