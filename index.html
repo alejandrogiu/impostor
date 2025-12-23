@@ -185,6 +185,20 @@
     .instructions-content strong {
       color: var(--primary);
     }
+    #privacyWarning {
+      background: rgba(255, 166, 0, 0.1);
+      border: 1px dashed var(--primary);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      animation: pulseWarning 2s infinite;
+    }
+    
+    @keyframes pulseWarning {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); background: rgba(255, 166, 0, 0.15); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 
@@ -219,13 +233,19 @@
     <div id="revealScreen" class="hidden">
       <div class="player-indicator" id="playerTitle"></div>
       
+      <div id="privacyWarning">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🤫</div>
+        <h3 style="margin-top:0">¡Asegurate de que nadie esté mirando!</h3>
+        <p style="opacity: 0.7; font-size: 0.9rem;">Tapá la pantalla o alejate un poco del resto.</p>
+      </div>
+    
       <div id="revealBox" class="reveal-box hidden">
         <div id="result" class="reveal-text"></div>
         <div id="timer" class="timer-badge"></div>
       </div>
-
-      <button id="revealBtn" onclick="reveal()">Toca para revelar</button>
-      <button id="nextBtn" class="hidden" onclick="nextPlayer()">Entregar al siguiente</button>
+    
+      <button id="revealBtn" onclick="reveal()" style="margin-top: 20px;">ENTENDIDO, MOSTRAR</button>
+      <button id="nextBtn" class="hidden" onclick="nextPlayer()">LISTO, PASAR CELULAR</button>
     </div>
 
     <div id="endScreen" class="hidden">
@@ -273,15 +293,21 @@
 
     function updatePlayerTitle() {
       playerTitle.innerText = `Turno del Jugador ${currentPlayer + 1}`;
+      
+      document.getElementById('privacyWarning').classList.remove("hidden");
       revealBtn.classList.remove("hidden");
       revealBox.classList.add("hidden");
       nextBtn.classList.add("hidden");
+      
+      revealBtn.innerText = "ENTENDIDO, MOSTRAR";
     }
-
+    
     function reveal() {
+      document.getElementById('privacyWarning').classList.add("hidden");
       revealBtn.classList.add("hidden");
+      
       revealBox.classList.remove("hidden");
-
+    
       let text, className;
       if (currentPlayer === impostorIndex) {
         text = "¡SOS EL IMPOSTOR!";
@@ -290,13 +316,13 @@
         text = secretWord;
         className = "word";
       }
-
+    
       result.innerText = text;
       result.className = `reveal-text ${className}`;
-
+    
       let timeLeft = 3;
       timer.innerText = `Ocultando en ${timeLeft}s...`;
-
+    
       countdownInterval = setInterval(() => {
         timeLeft--;
         if (timeLeft > 0) {
@@ -308,7 +334,6 @@
         }
       }, 1000);
     }
-
     function nextPlayer() {
       currentPlayer++;
       if (currentPlayer >= totalPlayers) {
