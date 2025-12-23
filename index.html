@@ -11,8 +11,8 @@
       --primary: #ff6a00;
       --secondary: #ee0979;
       --accent: #00e0ff;
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --glass-border: rgba(255, 255, 255, 0.1);
+      --card-bg: rgba(255,255,255,0.05);
+      --glass-border: rgba(255,255,255,0.1);
     }
 
     * { box-sizing: border-box; }
@@ -108,6 +108,34 @@
       opacity: 0.7;
     }
 
+    .how-to-play {
+      margin-top: 1.2rem;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 0.8rem;
+    }
+
+    .how-to-btn {
+      background: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      font-weight: 400;
+      padding: 0;
+      margin: 0;
+    }
+
+    .instructions-content {
+      background: rgba(0,0,0,0.25);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-top: 0.6rem;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .instructions-content strong {
+      color: var(--primary);
+    }
+
     .fade-out {
       opacity: 0;
       transform: translateY(-20px);
@@ -134,6 +162,16 @@
       <input id="playersInput" type="number" min="3" placeholder="Cantidad de jugadores" />
       <input id="wordInput" type="text" placeholder="Palabra secreta" />
       <button onclick="startGame()">Comenzar</button>
+
+      <!-- HOW TO PLAY (RESTAURADO) -->
+      <div class="how-to-play">
+        <button class="how-to-btn" onclick="toggleInstructions()">¿Cómo se juega? ▾</button>
+        <div id="instructions" class="instructions-content hidden">
+          <p>1. Uno o dos jugadores son el <strong>Impostor</strong> y no conocen la palabra.</p>
+          <p>2. Todos describen la palabra con <strong>una sola palabra</strong>.</p>
+          <p>3. El grupo vota quién es el impostor.</p>
+        </div>
+      </div>
     </div>
 
     <!-- REVEAL -->
@@ -149,7 +187,7 @@
       </div>
 
       <button id="revealBtn" onclick="reveal()">Revelar</button>
-      <button id="nextBtn" class="hidden" onclick="nextPlayer()">Pasa el celular</button>
+      <button id="nextBtn" class="hidden" onclick="nextPlayer()">Pasar celular</button>
     </div>
 
     <!-- END -->
@@ -240,6 +278,14 @@
       impostorResult.innerText =
         "Impostor: " + impostorIndexes.map(i => `Jugador ${i + 1}`).join(" y ");
       impostorResult.classList.remove("hidden");
+    }
+
+    function toggleInstructions() {
+      instructions.classList.toggle("hidden");
+      document.querySelector('.how-to-btn').innerText =
+        instructions.classList.contains("hidden")
+          ? "¿Cómo se juega? ▾"
+          : "Ocultar info ▴";
     }
   </script>
 </body>
